@@ -1,0 +1,7 @@
+{
+	- key1: 30
+	+ key1: 40
+	  key2: hexlet.io
+	- key3: 123.234.53.22
+	+ key4: false
+}

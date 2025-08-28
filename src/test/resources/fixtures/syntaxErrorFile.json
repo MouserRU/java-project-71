@@ -1,0 +1,6 @@
+{
+  "timeout": 50
+  "verbose" true,
+  "follow": false,
+  "length": 6
+}
