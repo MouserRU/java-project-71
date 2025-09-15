@@ -1,8 +1,10 @@
 plugins {
+    java
     application
     id("com.github.ben-manes.versions") version "0.52.0"
     checkstyle
     jacoco
+    id("org.sonarqube") version "6.3.1.5724"
 }
 
 group = "hexlet.code"
@@ -10,7 +12,7 @@ version = "1.0-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -18,8 +20,16 @@ repositories {
     mavenCentral()
 }
 
+sonarqube {
+    properties {
+        property("sonar.projectKey", "MouserRU_java-project-71")
+        property("sonar.organization", "mouserru-1")
+    }
+}
+
 checkstyle {
     toolVersion = "11.0.0"
+    configFile = file("config/checkstyle/checkstyle.xml")
 }
 
 dependencies {
