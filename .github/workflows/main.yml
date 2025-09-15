@@ -3,43 +3,48 @@ name: My project CI
 # on – определяет события, которые запускают воркфлоу
 on:
   - push
+    branches:
+      - main
   - pull_request
+      types: [opened, synchronize, reopened]
 jobs: # задания:
   build:
+    name: Build and analyze
     # операционная система для работы воркфлоу
     runs-on: ubuntu-latest
     steps: # список шагов, которые надо выполнить
       # экшен — выполняет какую-то задачу
       # checkout — клонирует репозиторий
-      - name: Repository cloning
       - uses: actions/checkout@v4
-      - name: Setup Java # Устанавливаем java
-      - uses: actions/setup-java@v4
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Setup Gradle # Устанавливаем Gradle
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           fetch-depth: 0 # Параметр 0 означает, что нужно загружать всю историю коммитов
-      - name: Execute Gradle build # Сборка проекта
+      - name: Execute Gradle build
         # run – bash-команда
         run: ./gradlew build
       - name: Generate coverage report # Создание отчета покрытия тестами
         run: ./gradlew jacocoTestReport
-      - name: Cache SonarQube packages # Кеширование файлов SonarQube
+      - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Gradle packages # Кеширование зависимостей Gradle
+      - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
-      - name: Build and analyze # Сборка и анализ на SonarQube
+      - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar --info
+        run: ./gradlew build sonar --info
